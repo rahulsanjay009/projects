@@ -1,6 +1,8 @@
-import { Box, InputBase, Paper, TextField } from "@mui/material";
+import Box from '@mui/material/Box';
+import InputBase from '@mui/material/InputBase';
+import Paper from '@mui/material/Paper';
 import { useState } from "react";
-import SearchIcon from '@mui/icons-material/Search';
+import { MdSearch as SearchIcon} from 'react-icons/md';
 
 const ProductSearchBar = ({selectSearchText}) => {
     const [searchText,setSearchText] = useState('')

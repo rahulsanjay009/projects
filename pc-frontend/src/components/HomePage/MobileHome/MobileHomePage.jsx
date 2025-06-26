@@ -14,7 +14,7 @@ import { useParams, Outlet, useNavigate } from 'react-router-dom'; // Use Outlet
 import MobileResponsiveMenu from './MobileResponsiveMenu'
 import useCategories from "../../../utils/useCategories";
 import MobileContactUs from "../../ContactUs/MobileContactUs";
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { MdShoppingCart as ShoppingCartIcon} from 'react-icons/md';
 import { useSelector } from "react-redux";
 
 const MobileHomePage = () => {

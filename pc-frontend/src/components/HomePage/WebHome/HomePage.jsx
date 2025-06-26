@@ -1,5 +1,5 @@
 // HomePage.jsx
-import { Box } from '@mui/material';
+import Box  from '@mui/material/Box';
 import { Outlet } from 'react-router-dom';
 import ResponsiveMenu from './ResponsiveMenu';
 import ContactUs from '../../ContactUs/ContactUs';

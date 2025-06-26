@@ -9,7 +9,7 @@ import {
 } from '@ionic/react';
 import {  useNavigate } from 'react-router-dom'; // Add Link to navigate
 
-const MobileResponsiveMenu = ({ categories, selectCategory, currentCategory }) => {
+const MobileResponsiveMenu = ({ categories}) => {
   const navigate = useNavigate()
   const handleCategoryChange = (category) => {
     navigate(encodeURIComponent(`/${category}`))

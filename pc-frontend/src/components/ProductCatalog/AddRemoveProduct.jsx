@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Box, IconButton, Input } from "@mui/material";
-import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material";
+import  { useState, useEffect } from "react";
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Input from '@mui/material/Input';
+import { MdAddCircleOutline as AddCircleOutline, MdRemoveCircleOutline as RemoveCircleOutline} from 'react-icons/md';
 import { useSelector, useDispatch } from "react-redux";
 import { setProductQuantity } from "../../Redux/Reducers/CartReducer";
 
@@ -73,8 +75,8 @@ const AddRemoveProduct = ({ productId }) => {
 
   return (
     <Box display="flex" alignItems="center" width="100%">
-      <IconButton onClick={handleRemove} color="success">
-        <RemoveCircleOutline />
+      <IconButton >
+        <RemoveCircleOutline onClick={handleRemove} color="success"/>
       </IconButton>
       <Input
         type="text"

@@ -1,24 +1,21 @@
-import { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Paper,
-  Grid,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Divider,
-  Card,
-  CardMedia,
-  CardContent,
-  FormControlLabel,
-  Checkbox,
-  Snackbar,
-  CircularProgress,
-} from "@mui/material";
+import { useState } from "react";
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import TextField from '@mui/material/TextField';
+import Divider from '@mui/material/Divider';
+import Card from '@mui/material/Card';
+import CardMedia from '@mui/material/CardMedia';
+import CardContent from '@mui/material/CardContent';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import CircularProgress from '@mui/material/CircularProgress';
 import AddRemoveProduct from "../ProductCatalog/AddRemoveProduct";
 import { useDispatch } from "react-redux";
 import { clearProducts } from "../../Redux/Reducers/CartReducer";
@@ -28,14 +25,11 @@ const CartPage = ({ cartItems }) => {
   const dispatch = useDispatch();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
-  const [deliveryDialogOpen, setDeliveryDialogOpen] = useState(false);
-  const [message, setMessage] = useState("");
-  const [chargeDetails, setChargeDetails] = useState("");
   const [loader, setLoader] = useState(false);
   const [totalDeliveryCharge, setTotalDeliveryCharge] = useState(0);
   const [totalDistance, setTotalDistance] = useState(0);
   const [totalDeliveryTime, setTotalDeliveryTime] = useState("N/A");
-  
+  const [message,setMessage] = useState('')
   const [form, setForm] = useState({
   name: "",
   phone: "",
@@ -218,20 +212,20 @@ const handleChange = (e) => {
       return;
     }
 
-    let distance = 0, time = "N/A", deliveryCharge = totalDeliveryCharge;
-    if (totalDeliveryCharge === 0 || `${form.streetAddress}, ${form.city}, ${form.state}, ${form.zipCode}` !== form.address) {      
-      const result = await calculateDistance(
-      "2619 Cordelian Ln, Tracy, CA",
-      form.address
-      );
-      distance = result.distance;
-      time = result.time;
-      deliveryCharge = await calculateDeliveryCharge(distance, time);
-    } else {
-      deliveryCharge = totalDeliveryCharge;
-      distance = totalDistance;
-      time = totalDeliveryTime;
-    }
+    // let distance = 0, time = "N/A", deliveryCharge = totalDeliveryCharge;
+    // if (totalDeliveryCharge === 0 || `${form.streetAddress}, ${form.city}, ${form.state}, ${form.zipCode}` !== form.address) {      
+    //   const result = await calculateDistance(
+    //   "2619 Cordelian Ln, Tracy, CA",
+    //   form.address
+    //   );
+    //   distance = result.distance;
+    //   time = result.time;
+    //   deliveryCharge = await calculateDeliveryCharge(distance, time);
+    // } else {
+    //   deliveryCharge = totalDeliveryCharge;
+    //   distance = totalDistance;
+    //   time = totalDeliveryTime;
+    // }
 
     const productDetails = cartItems
       .map(
@@ -249,9 +243,8 @@ const handleChange = (e) => {
       `Event Date: ${dayjs(form.eventDate).format("DD MMM YYYY")}\n` +
       `Delivery Required: ${form.deliveryRequired ? "Yes" : "No"}\n` +
       `Delivery Address: ${form.address}\n` +
-      `Pickup Time: ${form.pickupTime || "N/A"}\n` +
-      `Dropoff Time: ${form.dropoffTime || "N/A"}\n` +
-      `Distance: ~${distance} miles\n` +
+      `Pickup: ${form.pickupDate +" "+ form.pickupTime || "N/A"}\n` +
+      `Dropoff: ${form.dropoffDate +" "+form.dropoffTime || "N/A"}\n` +
       // `Estimated Delivery Charge: $${deliveryCharge}\n\n` +
       `*Products*:\n${productDetails}\n\n` +
       `*Total Price*:${totalPrice}\n\n` 

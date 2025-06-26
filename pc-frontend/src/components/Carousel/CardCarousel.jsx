@@ -1,11 +1,14 @@
-import React from 'react';
-import { Card, CardContent, CardMedia, Typography, CardHeader, Box } from '@mui/material';
+
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import CardHeader from '@mui/material/CardHeader';
+import Box from '@mui/material/Box';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import { useEffect } from 'react';
-import APIService from '../../services/APIService';
 
 const CardCarousel = ({events}) => {
 

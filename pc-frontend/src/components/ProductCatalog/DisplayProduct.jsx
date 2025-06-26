@@ -1,9 +1,11 @@
-import { Box, IconButton, Typography } from "@mui/material";
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import SideBar from "./SideBar";
 import Slider from "react-slick";
-import { WhatsApp } from "@mui/icons-material";
+import { FaWhatsapp as WhatsApp} from 'react-icons/fa';
 import AddRemoveProduct from "./AddRemoveProduct";
 
 const DisplayProduct = () => {
@@ -83,7 +85,7 @@ const DisplayProduct = () => {
           
             <Box display={"flex"} alignItems="center" flexWrap={'wrap'} mr={1} my={1}>
               {product.categories.map((cat, index) => (
-                <Typography fontSize={10} boxShadow={2} borderRadius={3} marginRight={0.5} p={0.5} bgcolor={'#EEEEEE'}> {cat?.name} </Typography>
+                <Typography key={index} fontSize={10} boxShadow={2} borderRadius={3} marginRight={0.5} p={0.5} bgcolor={'#EEEEEE'}> {cat?.name} </Typography>
                 )
               )}
             </Box>

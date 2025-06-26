@@ -1,4 +1,7 @@
-import { Box, Typography, CardContent, CircularProgress } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import CardContent from '@mui/material/CardContent';
+import CircularProgress from '@mui/material/CircularProgress';
 import StyledCard from './StyledCard';
 import CardCarousel from '../../Carousel/CardCarousel';
 import useEvents from '../../../utils/useEvents';
@@ -7,7 +10,7 @@ import CategoryCards from './CategoryCards';
 import LatestProductsCarousel from '../../Carousel/LatestProductsCarousel';
 
 const HomeLanding = () => {
-    const {events,eventsLoading} = useEvents()
+    const {events} = useEvents()
     const {categories,loading} = useCategories()
     return (
     <Box>

@@ -1,4 +1,4 @@
-import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonText, IonCard, IonCardContent } from "@ionic/react";
+import {IonText, IonCard, IonCardContent } from "@ionic/react";
 
 const MobileAboutUs = () => {
   return (

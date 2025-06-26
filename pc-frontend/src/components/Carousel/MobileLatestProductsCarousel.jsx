@@ -1,9 +1,22 @@
-import React, { useEffect, useState } from "react";
-import Slider from "react-slick";
-import { Box, Typography, CircularProgress } from "@mui/material";
-import APIService from "../../services/APIService";
-import { IonItem, IonLabel, IonTitle } from "@ionic/react";
-import { useNavigate } from "react-router-dom";
+// React hooks
+import { useEffect, useState } from 'react';
+
+// React Slick carousel
+import Slider from 'react-slick';
+
+// MUI components (optimized)
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+
+// Ionic components (keep as is, no per-component path available)
+import { IonItem, IonLabel } from '@ionic/react';
+
+// API service (your own code)
+import APIService from '../../services/APIService';
+
+// React Router hook
+import { useNavigate } from 'react-router-dom';
 
 const MobileLatestProductsCarousel = ({productsData = []}) => {
   const [products, setProducts] = useState([]);

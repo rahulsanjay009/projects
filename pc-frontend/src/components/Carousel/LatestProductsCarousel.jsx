@@ -1,6 +1,11 @@
-import React, { useEffect, useState } from "react";
-import Slider from "react-slick";
-import { Box, Typography, CircularProgress } from "@mui/material";
+import { useEffect, useState } from "react";
+// React Slick
+import Slider from 'react-slick';
+
+// MUI (optimized)
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 import APIService from "../../services/APIService";
 
 const LatestProductsCarousel = () => {

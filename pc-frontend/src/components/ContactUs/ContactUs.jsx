@@ -1,6 +1,10 @@
-import React from 'react';
-import { Box, IconButton, Typography, Link } from '@mui/material';
-import { WhatsApp, Instagram, OutgoingMail as Gmail } from '@mui/icons-material'; // Import MUI icons for WhatsApp, Instagram, and Gmail
+
+import Box from '@mui/material/Box';
+import  IconButton  from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import Link from '@mui/material/Link'
+import { FaWhatsapp as WhatsApp, FaInstagram as Instagram} from 'react-icons/fa';
+import { HiOutlineMail as OutgoingMail } from 'react-icons/hi';
 
 const ContactUs = () => {
   return (
@@ -44,14 +48,14 @@ const ContactUs = () => {
           <Instagram />
         </IconButton>
 
-        {/* Gmail Icon */}
+        {/* OutgoingMail Icon */}
         <IconButton
           component={Link}
-          href="mailto:srikrishnapartyrentals@gmail.com" // Replace with your Gmail address
+          href="mailto:srikrishnapartyrentals@gmail.com" // Replace with your OutgoingMail address
           target="_blank"
           color="inherit"
         >
-          <Gmail />
+          <OutgoingMail />
         </IconButton>
       </Box>
 

@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import APIService from "../../services/APIService";
 import CartPage from "./CartPage"; // The presentational UI component
-import { Box, Typography, CircularProgress } from "@mui/material";
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 const Cart = () => {
   const cartItems = useSelector((state) => state.CartReducer?.products || []);

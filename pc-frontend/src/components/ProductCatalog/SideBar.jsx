@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material"
+import  Box from "@mui/material/Box"
+import Typography from "@mui/material/Typography"
 import { useLocation, useNavigate } from "react-router-dom";
 import useCategories from "../../utils/useCategories";
 
@@ -6,7 +7,7 @@ const SideBar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const currentPath = decodeURIComponent(location.pathname).slice(1); // Remove leading slash
-    const { categories, loading } = useCategories();
+    const { categories } = useCategories();
     return (
       <Box
         sx={{

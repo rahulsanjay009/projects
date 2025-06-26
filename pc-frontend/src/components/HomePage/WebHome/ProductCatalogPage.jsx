@@ -1,15 +1,14 @@
 import { useState } from 'react';
-import { Box } from '@mui/material';
+import  Box  from '@mui/material/Box';
 import ProductSearchBar from '../../ProductSearchBar/ProductSearchBar';
 import ProductCatalog from '../../ProductCatalog/ProductCatalog';
 import useProducts from '../../../utils/useProducts';
 import { useParams } from 'react-router-dom';
-import ContactUs from '../../ContactUs/ContactUs';
 
 const ProductCatalogPage = () => {
     const { category } = useParams();
     const decodedCategory = decodeURIComponent(category || 'Home');
-    const { products, productsLoading } = useProducts(decodedCategory);
+    const { products } = useProducts(decodedCategory);
     const [searchText, setSearchText] = useState('');
 
     const filteredProducts = searchText.trim()

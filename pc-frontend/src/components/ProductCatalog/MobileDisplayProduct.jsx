@@ -7,19 +7,16 @@ import {
   IonIcon,
   IonCard,
   IonCardContent,
-  IonCardHeader,
   IonCardTitle,
   IonGrid,
   IonRow,
-  IonCol,
-  IonItem
 } from "@ionic/react";
 import { logoWhatsapp } from "ionicons/icons";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import AddRemoveProduct from "./AddRemoveProduct"; // Ensure this is compatible with Ionic or rework as needed
 import MobileLatestProductsCarousel from "../Carousel/MobileLatestProductsCarousel";
-import { Box } from "@mui/material";
+import Box from "@mui/material/Box";
 
 const MobileDisplayProduct = () => {
   const location = useLocation();

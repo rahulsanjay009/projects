@@ -1,21 +1,17 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import {
-  Box,
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  CircularProgress,
-  Typography,
-  IconButton,
-  Button,
-} from "@mui/material";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-import useCategories from "../../utils/useCategories";
-import { AddCircleOutline, RemoveCircleOutline, WhatsApp } from "@mui/icons-material";
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import { useNavigate } from "react-router-dom";
+import { FaWhatsapp as WhatsApp} from 'react-icons/fa';
 import SideBar from "./SideBar";
-import { useSelector } from "react-redux";
 import AddRemoveProduct from "./AddRemoveProduct";
+import { useLocation } from "react-router-dom";
 
 const BATCH_SIZE = 15;
 

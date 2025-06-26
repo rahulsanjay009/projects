@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import {
   IonCard,
   IonCardContent,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
   IonImg,
   IonRow,
   IonSpinner,
@@ -12,7 +9,6 @@ import {
 } from "@ionic/react";
 import './ProductCatalog.css';
 import IonIcon from "@reacticons/ionicons";
-import { useNavigate } from "react-router-dom";
 import AddRemoveProduct from "./AddRemoveProduct";
 
 const BATCH_SIZE = 8;

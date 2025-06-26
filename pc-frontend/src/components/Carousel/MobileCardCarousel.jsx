@@ -1,5 +1,5 @@
-import React from 'react';
-import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonImg, IonItem, IonTitle, IonLabel } from '@ionic/react';
+
+import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonImg, IonItem, IonLabel } from '@ionic/react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';

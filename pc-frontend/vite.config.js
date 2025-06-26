@@ -1,14 +1,25 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-// https://vite.dev/config/
-export default defineConfig(({command})=>({
+export default defineConfig(({command}) =>({
   plugins: [react()],
-  base : command === 'build'? '/projects/pc-frontend' :'/', 
-  loader: { '.js': 'jsx' },
+  resolve: {
+    alias: {
+      '@': '/src',
+    },
+  },
+  base: command === 'build'? '/' : '/',
   build: {
+    outDir: 'dist',
+    target: 'esnext',
+    cssCodeSplit: true,
+    sourcemap: false,
     rollupOptions: {
-      external:['@mui/system','dayjs','@mui/icons-material']
-    }
-  }  
-}))
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+        },
+      },
+    },
+  }
+}));
