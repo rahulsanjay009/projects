@@ -10,11 +10,12 @@ import Box from '@mui/material/Box';
 import Badge from '@mui/material/Badge';
 import { MdArrowDropDown as ArrowDropDownIcon, MdShoppingCart as ShoppingCartIcon } from 'react-icons/md';
 import { useSelector } from 'react-redux';
+import { selectTotalCount } from '../../../Redux/Reducers/CartReducer';
 
 const ResponsiveMenu = ({ categories }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const cartItemCount = useSelector((state) => state?.CartReducer?.products?.length || 0);
+  const cartItemCount = useSelector(selectTotalCount);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 

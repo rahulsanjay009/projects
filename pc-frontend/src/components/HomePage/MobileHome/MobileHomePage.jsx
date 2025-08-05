@@ -16,11 +16,12 @@ import useCategories from "../../../utils/useCategories";
 import MobileContactUs from "../../ContactUs/MobileContactUs";
 import { MdShoppingCart as ShoppingCartIcon} from 'react-icons/md';
 import { useSelector } from "react-redux";
+import { selectTotalCount } from "../../../Redux/Reducers/CartReducer";
 
 const MobileHomePage = () => {
   const { category } = useParams();  // Get category dynamically from the URL
   const { categories } = useCategories();
-  const cartItemCount = useSelector((state) => state?.CartReducer?.products.length || 0); // Example reducer to manage cart item count
+  const cartItemCount = useSelector(selectTotalCount); // Example reducer to manage cart item count
   const navigate = useNavigate();
   return (
     <>

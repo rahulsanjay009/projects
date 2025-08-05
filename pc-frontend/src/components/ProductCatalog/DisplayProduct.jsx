@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import SideBar from "./SideBar";
 import Slider from "react-slick";
-import { FaWhatsapp as WhatsApp} from 'react-icons/fa';
+import { FaWhatsapp as WhatsApp } from 'react-icons/fa';
 import AddRemoveProduct from "./AddRemoveProduct";
 
 const DisplayProduct = () => {
@@ -14,6 +14,7 @@ const DisplayProduct = () => {
   const { product, relatedProducts } = location.state || {};
 
   const [randomRelatedProducts, setRandomRelatedProducts] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(product?.image_url || "");
 
   const getRandomItems = (products) => {
     if (!products || products.length <= 10) return products || [];
@@ -26,6 +27,10 @@ const DisplayProduct = () => {
       setRandomRelatedProducts(getRandomItems(filtered));
     }
   }, [product, relatedProducts]);
+
+  useEffect(() => {
+    setSelectedImage(product?.image_url || "");
+  }, [product]);
 
   if (!product) {
     return (
@@ -49,73 +54,120 @@ const DisplayProduct = () => {
     autoplaySpeed: 2000,
     arrows: false,
     pauseOnHover: true,
-    dots:true,
+    dots: true,
   };
+
+  // Thumbnails should include original + additional images, excluding the current selected image
+  const thumbnails = [
+    { image_url: product.image_url, image_public_id: "main" },
+    ...(product.additional_images || [])
+  ].filter((img) => img.image_url !== selectedImage);
 
   return (
     <Box display="flex">
       <SideBar />
-      <Box sx={{ display: "flex", flexGrow: 1,  m:1 }}>
+      <Box sx={{ display: "flex", flexGrow: 1, m: 1 }}>
         {/* Product Info */}
         <Box
           sx={{
             flex: 2,
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap:1,
+            flexDirection: "row",
+            gap: 5,
+            m: 1,
           }}
         >
-             
-          <img
-            src={`${encodeURI(product.image_url)}?f_auto,q_auto,w_600`}
-            alt={product.name}
-            style={{
-              maxWidth: 450,
-              maxHeight: 350,
-              objectFit: "contain",
-              borderRadius: 10,
-            }}
-          />
-          <Box textAlign="start" p={1} maxWidth={'55%'}>
-            <Typography variant="h5" >
-              {product.name} 
-              
-            </Typography>
-          
-            <Box display={"flex"} alignItems="center" flexWrap={'wrap'} mr={1} my={1}>
-              {product.categories.map((cat, index) => (
-                <Typography key={index} fontSize={10} boxShadow={2} borderRadius={3} marginRight={0.5} p={0.5} bgcolor={'#EEEEEE'}> {cat?.name} </Typography>
-                )
-              )}
+          {/* Image Section */}
+          <Box>
+            <Box>
+              <img
+                src={`${encodeURI(selectedImage)}?f_auto,q_auto,w_600`}
+                alt={product.name}
+                style={{
+                  width: 450,
+                  height: 350,
+                  objectFit: "contain",
+                  
+                }}
+              />
             </Box>
-            
-            <Typography variant="body1" >
-              {product.description}
-            </Typography>
-            <Typography variant="body1" >
-              {product.price == 0 ? "Contact for price" : `$${product.price}`}
-            </Typography>
-            <Box display={"flex"} justifyContent={"space-between"} mt={1}>                      
-              <Box width='50%'><AddRemoveProduct productId={product.id}/></Box>
-                <IconButton
-                  component="a"
-                  href={`https://wa.me/16692688087?text=${encodeURIComponent(
-                    `Hi, I'm interested in this product:\n\n${product.name}\nPrice: ${
-                      product.price === 0 ? "Contact for price" : `$${product.price}`
-                    }\n\nImage: ${encodeURI(product.image_url)}?f_auto,q_auto,w_600\n\nIs this available?`
-                  )}`}
-                  target="_blank"
-                  color="inherit"
-                  onClick={(e) => e.stopPropagation()}
+
+            {/* Thumbnails */}
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 1,
+                maxWidth: 450,
+                mt: 1,
+              }}
+            >
+              {thumbnails.map((image) => (
+                <img
+                  key={image.image_public_id}
+                  src={`${encodeURI(image.image_url)}?f_auto,q_auto,w_600`}
+                  alt={product.name}
+                  onClick={() => setSelectedImage(image.image_url)}
+                  style={{
+                    width: 100,
+                    height: 100,
+                    objectFit: "contain",
+                    borderRadius: 10,
+                    border: "1px solid gray",
+                    cursor: "pointer",
+                  }}
+                />
+              ))}
+            </Box>
+          </Box>
+
+          {/* Details Section */}
+          <Box textAlign="start" p={1} maxWidth={"55%"}>
+            <Typography variant="h5">{product.name}</Typography>
+
+            <Box display={"flex"} alignItems="center" flexWrap={"wrap"} mr={1} my={1}>
+              {product.categories.map((cat, index) => (
+                <Typography
+                  key={index}
+                  fontSize={10}
+                  boxShadow={2}
+                  borderRadius={3}
+                  marginRight={0.5}
+                  p={0.5}
+                  bgcolor={"#EEEEEE"}
                 >
-                  <WhatsApp />
-                </IconButton>
+                  {cat?.name}
+                </Typography>
+              ))}
+            </Box>
+
+            <Typography variant="body1">{product.description}</Typography>
+            <Typography variant="body1">
+              {product.price === 0 ? "Contact for price" : `$${product.price}`}
+            </Typography>
+
+            <Box display={"flex"} justifyContent={"space-between"} mt={1}>
+              <Box width="50%">
+                <AddRemoveProduct productId={product.id} />
+              </Box>
+              <IconButton
+                component="a"
+                href={`https://wa.me/16692688087?text=${encodeURIComponent(
+                  `Hi, I'm interested in this product:\n\n${product.name}\nPrice: ${
+                    product.price === 0 ? "Contact for price" : `$${product.price}`
+                  }\n\nImage: ${encodeURI(selectedImage)}?f_auto,q_auto,w_600\n\nIs this available?`
+                )}`}
+                target="_blank"
+                color="inherit"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <WhatsApp />
+              </IconButton>
             </Box>
           </Box>
         </Box>
 
-        {/* Related Products Carousel */}
+        {/* Related Products */}
         <Box
           sx={{
             width: 270,
@@ -130,7 +182,6 @@ const DisplayProduct = () => {
           </Typography>
           <Slider {...carouselSettings}>
             {randomRelatedProducts.map((item) => (
-            
               <Box
                 key={item.id}
                 onClick={() =>
@@ -141,7 +192,6 @@ const DisplayProduct = () => {
                     },
                   })
                 }
-                
                 sx={{
                   cursor: "pointer",
                   width: 240,
@@ -155,7 +205,6 @@ const DisplayProduct = () => {
                   boxShadow: 3,
                 }}
               >
-                
                 <Box
                   sx={{
                     position: "absolute",

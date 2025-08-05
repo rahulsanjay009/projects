@@ -461,8 +461,13 @@ const handleChange = (e) => {
                 disabled={loader}
                 sx={{ gridColumn: { xs: "1", md: "1" } }}
               />
+              <FormControlLabel
+                control={<Checkbox name="deliveryRequired" checked={form.deliveryRequired} onChange={handleChange} />}
+                label="Delivery Required?"
+                sx={{ gridColumn: { xs: "1", md: "2" }, alignItems: "center" }}
+              />
               <TextField
-                label="Pickup Date"
+                label={form.deliveryRequired ? "Delivery Date" : "Pick Up Date"}
                 type="date"
                 name="pickupDate"
                 slotProps={{inputLabel:{shrink: true}}}
@@ -470,10 +475,10 @@ const handleChange = (e) => {
                 onChange={handleChange}
                 required
                 disabled={loader}
-                sx={{ gridColumn: { xs: "1", md: "2" } }}
+                sx={{ gridColumn: { xs: "1", md: "1" }, minHeight: '56px' }}
               />
               <TextField
-                label="Pickup Time"
+                label={form.deliveryRequired ? "Delivery Time" : "Pick Up Time"}
                 type="time"
                 name="pickupTime"
                 slotProps={{inputLabel:{shrink: true}}}
@@ -481,10 +486,10 @@ const handleChange = (e) => {
                 onChange={handleChange}
                 required
                 disabled={loader}
-                sx={{ gridColumn: { xs: "1", md: "1" } }}
+                sx={{ gridColumn: { xs: "1", md: "2" }, minHeight: '56px' }}
               />
               <TextField
-                label="Dropoff Date"
+                label={form.deliveryRequired ? "Pickup from Home Date" : "Drop Off Date"}
                 type="date"
                 name="dropoffDate"
                 slotProps={{inputLabel:{shrink: true}}}
@@ -492,10 +497,10 @@ const handleChange = (e) => {
                 onChange={handleChange}
                 required
                 disabled={loader}
-                sx={{ gridColumn: { xs: "1", md: "2" } }}
+                sx={{ gridColumn: { xs: "1", md: "1" }, minHeight: '56px' }}
               />
               <TextField
-                label="Dropoff Time"
+                label={form.deliveryRequired ? "Pickup from Home Time" : "Drop Off Time"}
                 type="time"
                 name="dropoffTime"
                 slotProps={{inputLabel:{shrink: true}}}
@@ -503,13 +508,9 @@ const handleChange = (e) => {
                 onChange={handleChange}
                 required
                 disabled={loader}
-                sx={{ gridColumn: { xs: "1", md: "1" } }}
+                sx={{ gridColumn: { xs: "1", md: "2" }, minHeight: '56px' }}
               />
-              <FormControlLabel
-                control={<Checkbox name="deliveryRequired" checked={form.deliveryRequired} onChange={handleChange} />}
-                label="Delivery Required?"
-                sx={{ gridColumn: { xs: "1", md: "2" }, alignItems: "center" }}
-              />
+              
               <TextField
                 label="Delivery Address"
                 name="address"
