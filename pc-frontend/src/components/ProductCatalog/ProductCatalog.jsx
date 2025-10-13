@@ -57,6 +57,7 @@ const ProductCatalog = ({ products = [], relatedProducts = [] }) => {
   }, [nextIndex, products]);
 
   useEffect(() => {
+
     setVisibleProducts([]);
     setNextIndex(0);
     productIds.current.clear();

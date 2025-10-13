@@ -10,6 +10,7 @@ import {
 import './ProductCatalog.css';
 import IonIcon from "@reacticons/ionicons";
 import AddRemoveProduct from "./AddRemoveProduct";
+import MobileProductImageSlideshow from "./MobileProductImageSlideShow";
 
 const BATCH_SIZE = 8;
 
@@ -59,18 +60,7 @@ const MobileProductCatalog = ({ products = [], relatedProducts = [] }) => {
     <>
       {visibleProducts.map((product, idx) => (
         <IonCard className="ion_card" key={`${product?.name}-${idx}`}>
-          {product.image_url ? (
-            <IonImg
-              className="ion_img"
-              src={`${encodeURI(product.image_url)}?f_auto,q_auto,w_600`}
-              alt={product.name}
-              style={{ width: '100%', height: '60vh', objectFit: 'contain' }}
-            />
-          ) : (
-            <div style={{ height: '250px', backgroundColor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <p style={{ color: '#999' }}>No Image</p>
-            </div>
-          )}
+          <MobileProductImageSlideshow product={product} />
           <IonCardContent>
             <IonRow>
               <IonText style={{fontSize:'18px', fontStyle:'bold', color:'black', marginBottom:'0.25rem'}}>{product.name}</IonText>              

@@ -48,10 +48,10 @@ const DisplayProduct = () => {
   const carouselSettings = {
     vertical: true,
     infinite: true,
-    slidesToShow: 3,
+    slidesToShow: 4,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 2000,
+    autoplaySpeed: 1500,
     arrows: false,
     pauseOnHover: true,
     dots: true,
@@ -73,7 +73,7 @@ const DisplayProduct = () => {
             flex: 2,
             display: "flex",
             flexDirection: "row",
-            gap: 5,
+            gap: 2,
             m: 1,
           }}
         >
@@ -85,7 +85,7 @@ const DisplayProduct = () => {
                 alt={product.name}
                 style={{
                   width: 450,
-                  height: 350,
+                  height: 450,
                   objectFit: "contain",
                   
                 }}
@@ -122,7 +122,7 @@ const DisplayProduct = () => {
           </Box>
 
           {/* Details Section */}
-          <Box textAlign="start" p={1} maxWidth={"55%"}>
+          <Box textAlign="start" p={1} m = {1}>
             <Typography variant="h5">{product.name}</Typography>
 
             <Box display={"flex"} alignItems="center" flexWrap={"wrap"} mr={1} my={1}>

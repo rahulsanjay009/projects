@@ -114,3 +114,7 @@
       transform: 'scale(1.05)';
     }
   }
+
+  .custom-chevron{
+     color: black !important;
+  }

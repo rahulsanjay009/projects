@@ -1,7 +1,7 @@
 
 const APIService = () => {
-  // const API_END_POINT = 'http://localhost:8000';
-  const API_END_POINT='https://backend.srikrishnapartyrentalsllc.com'
+  const API_END_POINT = 'http://localhost:8000';
+  // const API_END_POINT='https://backend.srikrishnapartyrentalsllc.com'
   const SECRET_API_KEY = import.meta.env.VITE_SECRET_API_KEY;
   const makeRequest = async (url, method, body = null, isFormData = false) => {
     const options = {

@@ -55,12 +55,18 @@ const APIService = () => {
         const url = `${APIENDPOINT}/inventory/filter_product_by_ids`;
         return makeRequest(url, 'POST', { ids: productIds });
     }
+
+    const sendOrderToSQS = (data) => {
+        const url = `${APIENDPOINT}/inventory/send_to_sqs`;
+        return makeRequest(url, 'POST', data);
+    }
     return {
         fetchCategories,
         fetchProducts,
         fetchEvents,
         fetchLatestProducts,
-        fetchCartProducts
+        fetchCartProducts,
+        sendOrderToSQS
     };
 };
 
