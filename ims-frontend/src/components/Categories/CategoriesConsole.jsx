@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField, Snackbar, Box } from '@mui/material';
 import APIService from '../../services/APIService';
+import CartPage from '../../../../pc-frontend/src/components/ProductCatalog/CartPage';
 
 const CategoriesConsole = () => {
     const [categories, setCategories] = useState([]);
@@ -48,6 +49,7 @@ const CategoriesConsole = () => {
         const formData = new FormData();
         formData.append('id', editingCategory.id);
         formData.append('name', editingCategory.name);
+        formData.append('s_no', editingCategory.s_no);
         if (editingCategory.image) formData.append('image', editingCategory.image);
         setLoader(true)
         const res = await APIService().updateCategory(formData);
@@ -111,7 +113,17 @@ const CategoriesConsole = () => {
                     <TableBody>
                         {categories.map((cat, idx) => (
                             <TableRow key={cat.id}>
-                                <TableCell>{idx + 1}</TableCell>
+                                <TableCell>
+                                    {editingCategory?.id === cat.id ? (
+                                        <TextField
+                                            value={editingCategory.s_no}
+                                            type='number'
+                                            onChange={(e) => setEditingCategory({ ...editingCategory, s_no: e.target.value })}
+                                        />
+                                    ) : (
+                                        cat.s_no
+                                    )}
+                                </TableCell>
                                 <TableCell>
                                     {editingCategory?.id === cat.id ? (
                                         <TextField

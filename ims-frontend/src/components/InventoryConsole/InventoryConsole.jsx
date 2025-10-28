@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styles from './InventoryConsole.module.css'
 import AddIcon from '@mui/icons-material/Add';
-import { TableCell, TableContainer, TableHead, TableRow, Paper, Table, TableBody, Button, Snackbar, Box } from '@mui/material';
+import { TableCell, TableContainer, TableHead, TableRow, Paper, Table, TableBody, Button, Snackbar, Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import APIService from '../../services/APIService';
 import SearchFilterAddInventory from './SearchFilterAddInventory';
 import AddProductModal from './AddProductModal';
@@ -16,11 +16,21 @@ const InventoryConsole = () => {
     const [showAddCategory,setShowAddCategory] = useState(false);
     const [message, setMessage] = useState('');
     const [loader,setLoader] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState("All Categories");
+    const [categories, setCategories] = useState([]);
+
 
     useEffect(() => {
         setLoader(true);
         fetchProducts();
+        fetchCategories();
     }, []);
+
+    const fetchCategories = () => {
+        APIService().fetchCategories().then((data) => {
+            if (data?.success) setCategories(data.categories);
+        }).catch((err) => console.log(err));
+    }
 
     const fetchProducts = () => {
         APIService().fetchProducts().then((res) => {
@@ -57,6 +67,21 @@ const InventoryConsole = () => {
         }).catch((err) => console.log(err)).finally(() => { setLoader(false); });
     };
 
+    const handleCategoryFilter = (categoryName) => {
+        // console.log(categoryId)
+        setSelectedCategory(categoryName);
+
+        if (categoryName.toUpperCase() === "ALL CATEGORIES") {
+            setProducts(originalProducts);
+            return;
+        }
+
+        const filtered = originalProducts.filter(product =>
+            product.categories.some(cat => cat.name === categoryName)
+        );
+        setProducts(filtered);
+    };
+
     const handleEditProduct = (product) => {
         setEditingProduct({ ...product });
         setShowEditModal(true);
@@ -80,9 +105,12 @@ const InventoryConsole = () => {
             .then((res) => {
                 if (res.success) {
                     const updatedProduct = res.product;
-                    const updatedProducts = products.map((product) =>
-                        product.id === updatedProduct.id ? updatedProduct : product
-                    );
+                    const updatedProducts = products.map((product) =>{
+                        if (product.id === updatedProduct.id) return updatedProduct;
+                        if (res?.swapped_with?.product_id === product.id)
+                            return { ...product, s_no: res.swapped_with.s_no };
+                        return product;
+                    });
                     setProducts(updatedProducts);
                     setMessage('Item details saved...');
                     setShowEditModal(false);
@@ -160,8 +188,28 @@ const InventoryConsole = () => {
                                 <TableCell> S.NO </TableCell>
                                 <TableCell> Product </TableCell>
                                 <TableCell className={styles.category_cell}>
-                                    Category
-                                    <Button onClick={() => setShowAddCategory(true)}><AddIcon className={styles.plus_icon} /> </Button>
+                                    {/* Category
+                                    <Button onClick={() => setShowAddCategory(true)}><AddIcon className={styles.plus_icon} /> </Button> */}
+                                    <Box display="flex" alignItems="center" gap={2} mb={2}>
+                                        <FormControl size="small" sx={{ minWidth: 200 }}>
+                                            <InputLabel id="category-filter-label">Filter by Category</InputLabel>
+                                            <Select
+                                            labelId="category-filter-label"
+                                            value={selectedCategory??""}
+                                            label="Filter by Category"
+                                            onChange={(e) =>{handleCategoryFilter(e.target.value);}}
+                                            >
+                                            <MenuItem value="All Categories">
+                                                <em>All Categories</em>
+                                            </MenuItem>
+                                            {categories.map((cat) => (
+                                                <MenuItem key={cat.name} value={cat.name}>
+                                                {cat.name}
+                                                </MenuItem>
+                                            ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Box>
                                 </TableCell>
                                 <TableCell> Description </TableCell>
                                 <TableCell> Image </TableCell>
@@ -174,7 +222,7 @@ const InventoryConsole = () => {
                         <TableBody>
                             {products.map((item, idx) => (
                                 <TableRow key={item.id}>
-                                    <TableCell> {idx + 1} </TableCell>
+                                    <TableCell> {item.s_no} </TableCell>
                                     <TableCell> {item.name} </TableCell>
                                     <TableCell>
                                         <Box display={'flex'} flexWrap={'wrap'} whiteSpace={'nowrap'} gap={'5px'}>

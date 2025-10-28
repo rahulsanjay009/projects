@@ -21,7 +21,7 @@ const HomeLanding = () => {
                 </Typography>
                 <br />
                 <Typography fontSize={'20px'}>
-                Srikrishna Party Rentals LLC is an event rental and event decoration services company located in Cordelia Ln, Tracy, CA 95377, United States. Our professional team can help you plan an amazing event Party Rentals that meets all of your needs. We provide everything from party rental supplies to custom decoration services. Our goal is to make every event memorable for you.
+                Srikrishna Party Rentals LLC is a premier event rental and setup service provider based in Cordelia Ln, Tracy, CA 95377, USA. From weddings and birthdays to corporate events and religious ceremonies, our experienced team is dedicated to helping you plan and execute the perfect celebration. We handle every detail professionally, ensuring your special occasion is seamless, stress-free, and truly memorable.
                 </Typography>
             </CardContent>
         </StyledCard>

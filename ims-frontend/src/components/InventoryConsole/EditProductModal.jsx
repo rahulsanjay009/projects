@@ -178,7 +178,7 @@ const EditProductModal = ({ open, onClose, product, onSave }) => {
     formData.append('total_qty', editedProduct.total_qty);
     formData.append('categories', JSON.stringify(editedProduct.categories));
     formData.append('removed_images', JSON.stringify(editedProduct.removed_image_ids || []));
-
+    formData.append('s_no', editedProduct.s_no);
     if (editedProduct.image?.type === 'new') {
       formData.append('image', editedProduct.image.file);
     } else if (editedProduct.image?.type === 'existing') {
@@ -192,8 +192,8 @@ const EditProductModal = ({ open, onClose, product, onSave }) => {
         formData.append('existing_additional_images[]', img.public_id);
       }
     });
-    for(const value of formData.entries()) {
-      console.log(value[0], value[1]);}
+    // for(const value of formData.entries()) {
+    //   console.log(value[0], value[1]);}
     onSave(formData);
     onClose();
   };
@@ -209,6 +209,12 @@ const EditProductModal = ({ open, onClose, product, onSave }) => {
       <DialogTitle>Edit Product</DialogTitle>
       <DialogContent>
         <Box display="flex" flexDirection="column" gap={2} py={2}>
+          <TextField
+            label="S.NO"
+            type='number'
+            value={editedProduct.s_no}
+            onChange={(e) => handleInputChange('s_no', e.target.value)}
+          />
           <TextField
             label="Name"
             value={editedProduct.name}

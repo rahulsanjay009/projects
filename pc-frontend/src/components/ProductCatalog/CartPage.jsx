@@ -28,22 +28,36 @@ import FormLabel from "@mui/material/FormLabel";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControl from "@mui/material/FormControl";
 import Radio from "@mui/material/Radio";
+import { v4 as uuidv4 } from "uuid";
+import { FaSms, FaWhatsapp } from "react-icons/fa";
+import { useEffect } from "react";
+import Stack from "@mui/material/Stack";
+import { MdOutlineEmail } from "react-icons/md";
 
 const CartPage = ({ cartItems }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    setIsMobile(checkMobile);
+  }, []);
   const dispatch = useDispatch();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [loader, setLoader] = useState(false);
+  const [isLoadingMessage, setIsLoadingMessage] = useState(false);
   const [totalDeliveryCharge, setTotalDeliveryCharge] = useState(0);
   const [totalDistance, setTotalDistance] = useState(0);
   const [totalDeliveryTime, setTotalDeliveryTime] = useState("N/A");
   const [message, setMessage] = useState('');
   const [chargeDetails, setChargeDetails] = useState('');
-  
+  const [orderConfirmation,setOrderConfirmation]=useState(false);
+  const [isEmailPrompt, setIsEmailPrompt] = useState(false);
+  const [orderConfirmationMessage,setOrderConfirmationMessage]=useState('');
   const [form, setForm] = useState({
     name: "",
     phone: "",
-    email:"",
+    // email:"",
     eventDate: null,
     address: "",
     streetAddress: "",
@@ -55,7 +69,8 @@ const CartPage = ({ cartItems }) => {
     pickupTime: null,
     dropoffDate: null,
     dropoffTime: null,
-    deliveryTip: 15, // Default to 15%
+    deliveryTip: 0,
+    additionalNotes:"" // Default to 15%
   });
 
   // Calculate total price from cart items
@@ -144,7 +159,7 @@ const CartPage = ({ cartItems }) => {
       return { distance: 0, time: "N/A" };
     }
   };
-
+  const [orderNumber,setOrderNumber]=useState('');
   // Calculate delivery charges based on distance and cart items
   const calculateDeliveryCharge = async (distanceInMiles, time) => {
     let details = ``;
@@ -237,8 +252,36 @@ const CartPage = ({ cartItems }) => {
     calculateDeliveryCharge(distance, time);
   };
 
+  const generateOrderNumber = () => {
+    // Create a 10-digit numeric ID from UUID
+    const num = Math.abs(uuidv4().hashCode() % 10000);
+    return num.toString().padStart(4, "0");
+  };
+
+  // Polyfill since JS doesn't have String.hashCode()
+  String.prototype.hashCode = function () {
+    let hash = 0;
+    for (let i = 0; i < this.length; i++) {
+      hash = (hash << 5) - hash + this.charCodeAt(i);
+      hash |= 0;
+    }
+    return hash;
+  };
   // Validate form and submit order via WhatsApp
-  const handleSubmit = async () => {
+  useEffect(()=>{
+    const hasEmptyRequiredField =
+    form.name &&
+    form.phone &&
+    form.eventDate &&
+    form.address &&
+    form.dropoffDate &&
+    form.pickupDate &&
+    form.dropoffTime &&
+    form.pickupTime;
+    if(hasEmptyRequiredField && message!=="")
+        setMessage('');
+  },[form])
+  const handleSubmit = async (sendVia) => {
     // Validate required fields
     if (!form.name || !form.phone || !form.eventDate || !form.address || 
         !form.dropoffDate || !form.pickupDate || !form.dropoffTime || !form.pickupTime) {
@@ -250,56 +293,97 @@ const CartPage = ({ cartItems }) => {
     const productDetails = cartItems
       .map(
         (item, idx) =>
-          `${idx + 1}. *${item.name}* - ${item.quantity} pcs @ $${item.price} = $${(parseFloat(item.price) * parseFloat(item.quantity)).toFixed(2)}\n${encodeURI(item.image_url)}`
+          `${idx + 1}. *${item.name}* - ${item.quantity} pcs @ $${item.price} = $${(parseFloat(item.price) * parseFloat(item.quantity)).toFixed(2)}\n${encodeURI(item.image_url.includes("?")
+  ? `${item.image_url}&preview=false`
+  : `${item.image_url}?preview=false`)}`
       )
       .join("\n\n");
-
+    const generatedOrderNumber = generateOrderNumber();
+    setOrderNumber(generatedOrderNumber);
     // Create WhatsApp message with tip information
-    const whatsappMessage =
-      `New Order\n` +
+    let whatsappMessage = "";
+    let smsMessage = "";
+    if(!isMobile){
+      whatsappMessage = "Click on \"Continue to WhatsApp Web\" to submit the order details.\n\n";
+    }
+      smsMessage= `New Order Request\nOrder #: ${generatedOrderNumber}\n\n` +
       `Name: ${form.name}\n` +
       `Phone: ${form.phone}\n` +
       `Event Date: ${form.eventDate ? form.eventDate.format("DD MMM YYYY") : "N/A"}\n` +
       `Delivery Required: ${form.deliveryRequired ? "Yes" : "No"}\n` +
-      `Delivery Address: ${form.address}\n` +
+      `Event Address: ${form.address}\n` +
       `${form.deliveryRequired ? 'Delivery on: ' : 'Pick up by Self: '} ${form.pickupDate ? form.pickupDate.format("YYYY-MM-DD") : "N/A"} ${form.pickupTime ? form.pickupTime.format("HH:mm") : "N/A"}\n` +
-      `${form.deliveryRequired ? 'Pickup on: ' : 'Drop off by Self: '} ${form.dropoffDate ? form.dropoffDate.format("YYYY-MM-DD") : "N/A"} ${form.dropoffTime ? form.dropoffTime.format("HH:mm") : "N/A"}\n` +
-      `*Products*:\n${productDetails}\n\n` +
-      `*PRICING BREAKDOWN*:\n` +
-      `Items Total: $${totalPrice.toFixed(2)}\n` +
-      `${form.deliveryRequired ? `Delivery Charge: $${totalDeliveryCharge.toFixed(2)}\n` : ''}` +
-      `${form.deliveryRequired && form.deliveryTip > 0 ? `Tip (${form.deliveryTip}%): $${calculateTipAmount().toFixed(2)} 💝\n` : ''}` +
+      `${form.deliveryRequired ? 'Pickup on: ' : 'Drop off by Self: '} ${form.dropoffDate ? form.dropoffDate.format("YYYY-MM-DD") : "N/A"} ${form.dropoffTime ? form.dropoffTime.format("HH:mm") : "N/A"}\n\n` +
+      `*Products* (Total Items: ${cartItems?.length}):\n${productDetails}\n\n` +
+      // `*PRICING BREAKDOWN*:\n` +
+      // `Items Total: $${totalPrice.toFixed(2)}\n` +
+      // `${form.deliveryRequired ? `Delivery Charge: $${totalDeliveryCharge.toFixed(2)}\n` : ''}` +
+      // `${form.deliveryRequired && form.deliveryTip > 0 ? `Tip (${form.deliveryTip}%): $${calculateTipAmount().toFixed(2)} 💝\n` : ''}` +
+      `Additional Notes: ${form.additionalNotes}\n\n`+
       `*GRAND TOTAL: $${calculateGrandTotal().toFixed(2)}*\n\n`;
-
-    // const whatsappURL = `https://wa.me/16692688087?text=${encodeURIComponent(whatsappMessage)}`;
-      const data = {
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
-        address: form.address,
-        eventDate: form.eventDate?.format("YYYY-MM-DD"),
-        eventTime: form.eventTime?.format("HH:mm"),
-        pickupDate: form.pickupDate?.format("YYYY-MM-DD"),
-        pickupTime: form.pickupTime?.format("HH:mm"),
-        dropoffDate: form.dropoffDate?.format("YYYY-MM-DD"),
-        dropoffTime: form.dropoffTime?.format("HH:mm"),
-        deliveryRequired: form.deliveryRequired,
-        products: cartItems?.map(p => ({
-          productName: p.name,
-          productQty: p.quantity.toString(),
-          imageUrl: p.image_url,
-          productPrice: p.price.toString()
-        }))
-      }
-    APIService().sendOrderToSQS(data).then((res)=>{
+      whatsappMessage+=smsMessage;
+      const whatsappURL = `https://wa.me/16692688087?text=${encodeURIComponent(whatsappMessage)}`;
+      const smsUrl = `sms:16692688087?body=${encodeURIComponent(smsMessage)}`;
+    
       
-      if(res?.success){
-        console.log(res?.messageId);
+    // APIService().sendOrderToSQS(data).then((res)=>{
+      
+    //   if(res?.success){
+    //     console.log(res?.messageId);
+    //     setOrderConfirmation(true);
+    //     setOrderNumber(generatedOrderNumber);
+    //   }
+    // }).catch((err) => {
+    //   console.log(err?.error);
+    // })
+    if(sendVia==="whatsapp"){
+      if(!isMobile)
+        window.open(whatsappURL, "_blank");
+      else
+        window.open(whatsappURL, "_self");
+      setOrderConfirmationMessage("Make sure you have sent the order via WhatsApp/Text Message and received a confirmation from us.");
+    }
+    else if(isMobile && sendVia==="text"){
+       window.open(smsUrl, "_self");
+      setOrderConfirmationMessage("Make sure you have sent the order via WhatsApp/Text Message and received a confirmation from us.");
+    }       
+    else if(sendVia==="email"){
+        setIsLoadingMessage(true);
+        const data = {
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          address: form.address,
+          eventDate: form.eventDate?.format("YYYY-MM-DD"),
+          eventTime: form.eventTime?.format("HH:mm"),
+          pickupDate: form.pickupDate?.format("YYYY-MM-DD"),
+          pickupTime: form.pickupTime?.format("HH:mm"),
+          dropoffDate: form.dropoffDate?.format("YYYY-MM-DD"),
+          dropoffTime: form.dropoffTime?.format("HH:mm"),
+          deliveryRequired: form.deliveryRequired,
+          orderNumber: generatedOrderNumber,
+          additionalNotes:form.additionalNotes,
+          products: cartItems?.map(p => ({
+            productName: p.name,
+            productQty: p.quantity.toString(),
+            imageUrl: p.image_url,
+            productPrice: p.price.toString()
+          })),
+          totalPrice: totalPrice.toFixed(2).toString(),
+          totalItems: cartItems?.length.toString(),
       }
-    }).catch((err) => {
-      console.log(err?.error);
-    })
-    // window.open(whatsappURL, "_blank");
+      APIService().sendOrderToSQS(data).then((res)=>{
+        if(res?.success){
+          // console.log(res?.messageId);
+          setOrderConfirmationMessage("Check the order submission email in your inbox/Spam. We'll reach out to you shortly to confirm the order and payment details. For quick response, contact us directly on +1 (669) 268 8087 with your order details.");
+          setIsLoadingMessage(false);
+        }   
+      }).catch((err) => {
+        console.log(err?.error);
+        setOrderConfirmationMessage("Something went wrong while sending the order email. Please try again or contact us directly on +1 (669) 268 8087.");
+      }); 
+    }
+    setIsEmailPrompt(false);
     setDialogOpen(false);
     setConfirmationOpen(true);
   };
@@ -386,7 +470,7 @@ const CartPage = ({ cartItems }) => {
               <Divider sx={{ my: 1 }} />
 
               <Box display="flex" justifyContent="space-between" my={1} sx={{ fontSize: '1.1em' }}>
-                <span><strong>Grand Total:</strong></span>
+                <span>Grand Total:</span>
                 <b>${calculateGrandTotal().toFixed(2)}</b>
               </Box>
               
@@ -422,7 +506,7 @@ const CartPage = ({ cartItems }) => {
                 onClick={() => setDialogOpen(true)}
                 disabled={cartItems.length === 0}
               >
-                Submit Order via WhatsApp
+                Place Order
               </Button>
             </Paper>
           </Grid>
@@ -436,7 +520,26 @@ const CartPage = ({ cartItems }) => {
           maxWidth="md"
           fullWidth
         >
-          <DialogTitle>Enter Your Information</DialogTitle>
+          <DialogTitle>
+            <Typography variant="h6">
+              Enter Your Information
+            </Typography>
+            {/* Error Message Display */}
+            {message && (
+              <Box 
+                sx={{ 
+                  gridColumn: "1 / -1", 
+                  p: 2, 
+                  bgcolor: "error.light", 
+                  color: "error.contrastText", 
+                  borderRadius: 1 
+                }}
+              >
+                <Typography variant="body2">{message}</Typography>
+              </Box>
+            )}
+          </DialogTitle>
+          
           <DialogContent
             sx={{
               display: "grid",
@@ -448,7 +551,7 @@ const CartPage = ({ cartItems }) => {
             {/* Basic Information */}
             <TextField
               disabled={loader}
-              label="Name"
+              label="Full Name"
               name="name"
               value={form.name}
               onChange={handleChange}
@@ -461,20 +564,38 @@ const CartPage = ({ cartItems }) => {
               label="Phone Number"
               name="phone"
               value={form.phone}
-              onChange={handleChange}
-              required
-              sx={{ gridColumn: { xs: "1", md: "2" }, mt:1 }}
-            />
+              onChange={(e) => {
+                let value = e.target.value.replace(/\D/g, ""); // remove all non-digits
+                if (value.length > 10) value = value.slice(0, 10); // max 10 digits
 
+                // Format as xxx-xxx-xxxx
+                if (value.length > 6) {
+                  value = `${value.slice(0,3)}-${value.slice(3,6)}-${value.slice(6,10)}`;
+                } else if (value.length > 3) {
+                  value = `${value.slice(0,3)}-${value.slice(3)}`;
+                }
+
+                handleChange({ target: { name: "phone", value } });
+              }}
+              inputProps={{ inputMode: "numeric" }}
+              required
+              sx={{ gridColumn: { xs: "1", md: "2" }, mt: 1 }}
+            />
+           
+{/* Delivery Address */}
             <TextField
-              disabled={loader}
-              label="Email"
-              name="email"
-              value={form.email}
+              label="Event Venue Address"
+              name="address"
+              value={form.address}
               onChange={handleChange}
               required
-              sx={{ gridColumn: { xs: "1", md: "1" } }}
+              multiline
+              rows={1}
+              disabled={loader}
+              sx={{ gridColumn: "1 / -1" }}
+              placeholder="Enter your full event address"
             />
+            
 
             {/* Event Date */}
             <DatePicker
@@ -482,7 +603,7 @@ const CartPage = ({ cartItems }) => {
               value={form.eventDate}
               onChange={(value) => handleDateTimeChange("eventDate", value)}
               disabled={loader}
-              sx={{ gridColumn: { xs: "1", md: "2" } }}
+              sx={{ gridColumn: { xs: "1", md: "1" } }}
               slotProps={{
                 textField: {
                   required: true
@@ -491,7 +612,7 @@ const CartPage = ({ cartItems }) => {
             />
 
             {/* Delivery Required Checkbox */}
-            <FormControl sx={{ gridColumn: { xs: "1", md: "1" } }}>
+            <FormControl sx={{ gridColumn: { xs: "1", md: "2" } }}>
               <FormLabel>Delivery Required?</FormLabel>
               <RadioGroup
                 row
@@ -540,7 +661,7 @@ const CartPage = ({ cartItems }) => {
 
             {/* Return/Dropoff Date and Time */}
             <DatePicker
-              label={form.deliveryRequired ? "Pickup from Home Date" : "Drop Off Date"}
+              label={form.deliveryRequired ? "Pickup from Venue Date" : "Drop Off Date"}
               value={form.dropoffDate}
               onChange={(value) => handleDateTimeChange("dropoffDate", value)}
               disabled={loader}
@@ -553,7 +674,7 @@ const CartPage = ({ cartItems }) => {
             />
 
             <TimePicker
-              label={form.deliveryRequired ? "Pickup from Home Time" : "Drop Off Time"}
+              label={form.deliveryRequired ? "Pickup from Venue Time" : "Drop Off Time"}
               value={form.dropoffTime}
               onChange={(value) => handleDateTimeChange("dropoffTime", value)}
               disabled={loader}
@@ -565,247 +686,113 @@ const CartPage = ({ cartItems }) => {
               }}
             />
 
-            {/* Delivery Address */}
+            
+
             <TextField
-              label="Delivery Address"
-              name="address"
-              value={form.address}
+              label="Additional Notes"
+              name="additionalNotes"
+              value={form.additionalNotes}
               onChange={handleChange}
-              required
               multiline
-              rows={3}
+              rows={1}
               disabled={loader}
               sx={{ gridColumn: "1 / -1" }}
-              placeholder="Enter your full delivery address"
+              placeholder="Enter additional notes to the business"
             />
 
-            {/* Enhanced Delivery Tip Section */}
-            {form.deliveryRequired && (
-              <Box 
-                sx={{ 
-                  gridColumn: "1 / -1",
-                  p: 3,
-                  bgcolor: "success.50",
-                  border: "1px solid",
-                  borderColor: "success.200",
-                  borderRadius: 2,
-                  mt: 2,
-                  background: "linear-gradient(135deg, rgba(46, 125, 50, 0.05) 0%, rgba(102, 187, 106, 0.05) 100%)"
-                }}
-              >
-                {/* Header with icon and title */}
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="h6" color="success.dark" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <span style={{ fontSize: '1.2em' }}>💰</span>
-                    Delivery Tip (Optional)
-                  </Typography>
-                </Box>
-                
-                {/* Description */}
-                <Typography variant="body2" color="text.secondary" mb={3}>
-                  Show appreciation for our delivery service. Your tip helps support our drivers and ensures excellent service!
+            
+            <Box sx={{ gridColumn: "1 / -1" }} > 
+              <Paper variant="outlined" sx={{ p: 2, fontSize: '0.75rem', lineHeight: 1.4 }}>
+                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                  ⚠️ Terms & Conditions
                 </Typography>
-                
-                {/* Main tip input and display */}
-                <Grid container spacing={3} alignItems="stretch">
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      disabled={loader}
-                      label="Tip Percentage"
-                      name="deliveryTip"
-                      type="number"
-                      value={form.deliveryTip || ''}
-                      onChange={handleChange}
-                      fullWidth
-                      inputProps={{ min: 0, max: 50, step: 1 }}
-                      InputProps={{
-                        endAdornment: (
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <Typography variant="body2" color="text.secondary">%</Typography>
-                          </Box>
-                        )
-                      }}
-                      placeholder="15"
-                      helperText="Suggested: 15-20% for excellent service"
-                      sx={{
-                        '& .MuiOutlinedInput-root': {
-                          '&:hover fieldset': {
-                            borderColor: 'success.main',
-                          },
-                        },
-                      }}
-                    />
-                  </Grid>
-                  
-                  <Grid item xs={12} sm={6}>
-                    <Paper 
-                      elevation={2} 
-                      sx={{ 
-                        p: 2.5, 
-                        bgcolor: "background.paper",
-                        textAlign: "center",
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        border: '1px solid',
-                        borderColor: 'success.200',
-                        transition: 'all 0.2s',
-                        '&:hover': {
-                          elevation: 4,
-                          borderColor: 'success.main'
-                        }
-                      }}
-                    >
-                      <Typography variant="body2" color="text.secondary" gutterBottom>
-                        💡 Tip Amount
-                      </Typography>
-                      <Typography variant="h5" color="success.main" fontWeight="bold" sx={{ mb: 0.5 }}>
-                        ${calculateTipAmount().toFixed(2)}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        Based on order total + delivery
-                      </Typography>
-                    </Paper>
-                  </Grid>
-                </Grid>
-                
-                {/* Quick tip selection buttons */}
-                <Box sx={{ mt: 3 }}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    ⚡ Quick select:
-                  </Typography>
-                  <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
-                    {[10, 15, 20, 25].map((percentage) => (
-                      <Button
-                        key={percentage}
-                        size="small"
-                        variant={form.deliveryTip === percentage ? "contained" : "outlined"}
-                        color="success"
-                        onClick={() => setForm(prev => ({ ...prev, deliveryTip: percentage }))}
-                        sx={{ 
-                          minWidth: 'auto', 
-                          px: 2,
-                          fontWeight: form.deliveryTip === percentage ? 'bold' : 'normal',
-                          transition: 'all 0.2s',
-                          '&:hover': {
-                            transform: 'translateY(-1px)',
-                            boxShadow: 2
-                          }
-                        }}
-                      >
-                        {percentage}%
-                      </Button>
-                    ))}
-                    <Button
-                      size="small"
-                      variant={form.deliveryTip === 0 ? "contained" : "outlined"}
-                      color="inherit"
-                      onClick={() => setForm(prev => ({ ...prev, deliveryTip: 0 }))}
-                      sx={{ 
-                        minWidth: 'auto', 
-                        px: 2,
-                        fontWeight: form.deliveryTip === 0 ? 'bold' : 'normal',
-                        transition: 'all 0.2s',
-                        '&:hover': {
-                          transform: 'translateY(-1px)',
-                          boxShadow: 1
-                        }
-                      }}
-                    >
-                      No Tip
-                    </Button>
-                  </Box>
-                </Box>
-
-                {/* Tip breakdown if tip is selected */}
-                {form.deliveryTip > 0 && (
-                  <Box 
-                    sx={{ 
-                      mt: 2, 
-                      p: 2, 
-                      bgcolor: 'rgba(46, 125, 50, 0.08)', 
-                      borderRadius: 1,
-                      border: '1px dashed',
-                      borderColor: 'success.300'
-                    }}
-                  >
-                    <Typography variant="caption" color="success.dark" display="block" gutterBottom>
-                      <strong>💝 Thank you for your generosity!</strong>
-                    </Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Typography variant="body2" color="text.secondary" fontSize='small'>
-                        Order Total: ${totalPrice.toFixed(2)} + Delivery: ${totalDeliveryCharge.toFixed(2)} = ${(totalPrice + totalDeliveryCharge).toFixed(2)}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 0.5}}>
-                      <Typography variant="body2" color="success.dark" fontSize='small'>
-                        {form.deliveryTip}% tip on ${(totalPrice + totalDeliveryCharge).toFixed(2)}
-                      </Typography>
-                      <Typography variant="body2" color="success.main" fontWeight="bold" fontSize='small'>
-                        ${calculateTipAmount().toFixed(2)}
-                      </Typography>
-                    </Box>                    
-                  </Box>
-                )}
-                <Box sx={{ display: 'flex', p: 1, justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Typography variant="body2" color="success.dark" >
-                    Net Total including Tip:
-                  </Typography>
-                  <Typography variant="body2" color="success.main" fontWeight="bold">
-                    ${(calculateTipAmount() + totalPrice).toFixed(2)}
-                  </Typography>
-                </Box>
-              </Box>
-            )}
-
-            {/* Error Message Display */}
-            {message && (
-              <Box 
-                sx={{ 
-                  gridColumn: "1 / -1", 
-                  p: 2, 
-                  bgcolor: "error.light", 
-                  color: "error.contrastText", 
-                  borderRadius: 1 
+                <Typography variant="body2" gutterBottom>
+                  • Your order will be confirmed only after advance payment is made.
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  • Rental prices apply for a 24-hour period.
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  • All orders are final — no cancellations, refunds, or exchanges will be accepted.
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  • Items must be returned in the same condition as received.
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  • You are responsible for any damages or liabilities during the rental period.
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  • Delivery charges are extra, based on distance and number of items.
+                </Typography>
+                <Typography variant="body2" sx={{ mt: 1, fontStyle: 'italic' }}>
+                  By proceeding, you acknowledge that you have read and agree to these terms.
+                </Typography>
+              </Paper>
+            </Box>
+            <Stack
+              direction={{ xs: "column", sm: "row" }} // vertical on mobile, horizontal on tablet+
+              spacing={2}
+              width="100%"
+              alignItems="center"
+              sx={{justifyContent: "center", display: 'flex', gridColumn: "1 / -1"}}
+            >
+              
+              <Button
+                onClick={() => handleSubmit("whatsapp")}
+                variant="contained"
+                color="success"
+                disabled={loader}
+                fullWidth
+              >
+                {loader ? <CircularProgress color="inherit" size={14} sx={{ mr: 1 }} /> : <>Place Order via WhatsApp <FaWhatsapp size={28} style={{marginLeft:'5px', alignSelf:'center'}}/></>}              
+              </Button>
+              {isMobile && <Button
+                onClick={() => handleSubmit("text")}
+                variant="contained"
+                color="info"
+                disabled={loader}
+                fullWidth
+              >
+                {loader ? <CircularProgress color="inherit" size={14} sx={{ mr: 1 }} /> : <>Place Order via Text SMS <FaSms size={28} style={{marginLeft:'5px', alignSelf:'center'}}/></>}
+              </Button>}
+              <Button
+                onClick={() => setIsEmailPrompt(true)}
+                variant="contained"
+                color=""
+                disabled={loader}
+                fullWidth
+                sx={{
+                  background: "#786c3fff",
+                  color: "#fff",
                 }}
               >
-                <Typography variant="body2">{message}</Typography>
-              </Box>
-            )}
+                {loader ? <CircularProgress color="inherit" size={14} sx={{ mr: 1 }} /> : <>Place Order via Email <MdOutlineEmail size={28} style={{marginLeft:'5px', alignSelf:'center'}}/></>}
+              </Button>
+              <Button variant="outlined" color='error' onClick={() => setDialogOpen(false)} disabled={loader}>
+                Close
+              </Button>
+            </Stack>
           </DialogContent>
-
-          <DialogActions>
-            <Button onClick={() => setDialogOpen(false)} disabled={loader}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              variant="contained"
-              color="success"
-              disabled={loader}
-            >
-              {loader && <CircularProgress color="inherit" size={14} sx={{ mr: 1 }} />}
-              Send via WhatsApp
-            </Button>
-          </DialogActions>
+            
+          
+            
+         
         </Dialog>
 
         {/* Order Confirmation Dialog */}
         <Dialog open={confirmationOpen} onClose={() => setConfirmationOpen(false)}>
-          <DialogTitle>Order Submitted Successfully</DialogTitle>
+          <DialogTitle>{`🎉 Your order #${orderNumber} has been submitted successfully!`} </DialogTitle>
           <DialogContent>
             <Typography gutterBottom>
-              Your order has been submitted via WhatsApp. We will contact you shortly 
-              for order confirmation and to finalize the details.
+              {isLoadingMessage? <CircularProgress/>: orderConfirmationMessage}
             </Typography>
             <Typography variant="body2" color="warning.main" textAlign="right" mt={2}>
-              Clicking OK will clear your cart
+              Click <i>CLEAR CART</i> to clear all items from your cart. 
             </Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setConfirmationOpen(false)}>
-              Keep Cart
+            <Button onClick={() => {setConfirmationOpen(false); setMessage(''); }}>
+              Close
             </Button>
             <Button
               color="error"
@@ -820,6 +807,35 @@ const CartPage = ({ cartItems }) => {
             </Button>
           </DialogActions>
         </Dialog>
+        <Dialog open = {isEmailPrompt} onClose={() => setIsEmailPrompt(false)}>
+          <DialogTitle variant="body1">Please enter your email to send us the order</DialogTitle>
+          <DialogContent> 
+            <TextField
+              disabled={loader}
+              label="Email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              required
+              fullWidth
+              sx={{ mt:1 }}
+            />
+            </DialogContent>
+            <DialogActions>
+              <Button variant="outlined" color="error" onClick={() => setIsEmailPrompt(false)}>
+                Cancel
+              </Button>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={() => {
+                  handleSubmit("email");
+                }}
+              >
+                Send
+              </Button>
+            </DialogActions>
+        </Dialog> 
       </Box>
     </LocalizationProvider>
   );

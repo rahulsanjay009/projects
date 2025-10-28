@@ -18,7 +18,7 @@ const CategoryCards = ({ categories = [] }) => {
   const [loading, setLoading] = useState(true);
 
   const defaultImage = 'https://res.cloudinary.com/dmm4awbwm/image/upload/v1746672352/rlrckqhdnfdnvohwt4xb.png';
-  const allImage = 'https://thumbs.dreamstime.com/b/event-supplies-flat-glyph-icons-party-equipment-stage-constructions-visual-projector-stanchion-flipchart-marquee-signs-115703883.jpg';
+  const allImage = 'https://res.cloudinary.com/dmm4awbwm/image/upload/v1761675837/a_creative_logo_that_contains_text_all_slspy9.gif';
 
   useEffect(() => {
     const imageUrls = [
@@ -68,7 +68,7 @@ const CategoryCards = ({ categories = [] }) => {
       <Card onClick={() => handleClick('/ALL')} sx={cardStyle}>
         <CardContent>
           <img src={allImage} alt="All" style={imageStyle} />
-          <Typography variant="body1" mt={1}>All</Typography>
+          <Typography variant="body1" mt={1} fontWeight={"bold"}>All Pictures</Typography>
         </CardContent>
       </Card>
 

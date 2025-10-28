@@ -42,7 +42,7 @@ const SideBar = () => {
             backgroundColor: "#f1f1f1", // track color
           },
         }}>
-        {[{name:'ALL'},...categories].map((cat) => {
+        {[{name:'ALL',value:'All Pictures'},...categories.map((cat)=>({name:cat.name, value:cat.name}))].map((cat) => {
           const isSelected = cat.name.toLowerCase() === currentPath.toLowerCase();
           return (
             <Box
@@ -61,9 +61,9 @@ const SideBar = () => {
                 fontSize:'14px',
                 minWidth:'200px'
               }}
-              onClick={() => navigate(`/${encodeURIComponent(cat.name)}`)}
+              onClick={() => {navigate(`/${encodeURIComponent(cat.name)}`); window.location.reload();}}
             >
-              {cat.name}
+              {cat.value}
             </Box>
           );
         })}

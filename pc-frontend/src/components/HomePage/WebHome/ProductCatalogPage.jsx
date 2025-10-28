@@ -10,7 +10,6 @@ const ProductCatalogPage = () => {
     const decodedCategory = decodeURIComponent(category || 'Home');
     const { products } = useProducts(decodedCategory);
     const [searchText, setSearchText] = useState('');
-
     const filteredProducts = searchText.trim()
         ? products.filter(
             (product) =>

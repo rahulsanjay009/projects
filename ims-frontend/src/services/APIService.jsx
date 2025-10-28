@@ -113,6 +113,15 @@ const APIService = () => {
     const url = `${API_END_POINT}/inventory/new_category`;
     return await makeRequest(url, 'POST',formData,true);
   }
+
+  // const authorizeAdmin = async (token) => {
+  //   const url = `${API_END_POINT}/inventory/authorize_admin`;
+  //   if(token === "abc")
+  //     return {success:true};
+  //   // return await makeRequest(url, 'POST', { token });
+  //   return {success:false};
+  // }
+
   return {
     fetchProducts,
     saveProduct,
@@ -134,7 +143,8 @@ const APIService = () => {
     retrieveCategories,
     deleteCategory,
     updateCategory,
-    addCategory
+    addCategory,
+    // authorizeAdmin
   };
 };
 

@@ -57,7 +57,7 @@ const MobileHomeContent = () => {
           <br />
           <br />
           <IonText style={{ fontSize: "14px" }}>
-            Srikrishna Party Rentals LLC is an event rental and event decoration services company located in Cordelia Ln, Tracy, CA 95377, United States. Our professional team can help you plan an amazing event Party Rentals that meets all of your needs. We provide everything from party rental supplies to custom decoration services. Our goal is to make every event memorable for you.
+            Srikrishna Party Rentals LLC is a premier event rental and setup service provider based in Cordelia Ln, Tracy, CA 95377, USA. From weddings and birthdays to corporate events and religious ceremonies, our experienced team is dedicated to helping you plan and execute the perfect celebration. We handle every detail professionally, ensuring your special occasion is seamless, stress-free, and truly memorable.
           </IonText>
         </IonCardContent>
       </IonCard>
@@ -68,22 +68,24 @@ const MobileHomeContent = () => {
       </IonItem>
       <div className="categories_cards">
         {/* Category card for "All" */}
-        <IonCard key={"ALL"} onClick={() => navigate(encodeURIComponent(`/ALL`))} className="category_card">
+        <IonCard key={"ALL"} onClick={() => {navigate(encodeURIComponent(`/ALL`)); window.location.reload();}} className="category_card">
           <IonCardContent>
             <img
-              src={"https://thumbs.dreamstime.com/b/event-supplies-flat-glyph-icons-party-equipment-stage-constructions-visual-projector-stanchion-flipchart-marquee-signs-115703883.jpg"}
+              src={"https://res.cloudinary.com/dmm4awbwm/image/upload/v1761675837/a_creative_logo_that_contains_text_all_slspy9.gif"}
               alt={"img"}
               height="100"
               width="100"
             />
             <br />
-            <IonText>{'All'}</IonText>
+            <IonText><b>{'All Pictures'}</b></IonText>
           </IonCardContent>
         </IonCard>
 
         {/* Category cards */}
         {[...categories].map((cat, index) => (
-          <IonCard key={index} onClick={() => navigate(encodeURIComponent(`/${cat?.name}`))} className="category_card">
+          <IonCard key={index} onClick={() => {
+            navigate(encodeURIComponent(`/${cat?.name}`));
+            }} className="category_card">
             <IonCardContent>
               <img
                 src={
@@ -96,7 +98,7 @@ const MobileHomeContent = () => {
                 width="100"
               />
               <br />
-              <IonText style={{ fontSize: "14px", fontWeight: "300" }}>
+              <IonText>
                 {cat?.name}
               </IonText>
             </IonCardContent>

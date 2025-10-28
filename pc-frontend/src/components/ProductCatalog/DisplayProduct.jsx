@@ -7,12 +7,15 @@ import SideBar from "./SideBar";
 import Slider from "react-slick";
 import { FaWhatsapp as WhatsApp } from 'react-icons/fa';
 import AddRemoveProduct from "./AddRemoveProduct";
+import ProductEnquiryModal from './ProductEnquiryModal';
 
 const DisplayProduct = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { product, relatedProducts } = location.state || {};
-
+  const [eventDate, setEventDate] = useState('');
+  const [showEventDateModal, setShowEventDateModal] = useState(false);
+  const [productEnquiry, setProductEnquiry] = useState(null);
   const [randomRelatedProducts, setRandomRelatedProducts] = useState([]);
   const [selectedImage, setSelectedImage] = useState(product?.image_url || "");
 
@@ -152,21 +155,21 @@ const DisplayProduct = () => {
               </Box>
               <IconButton
                 component="a"
-                href={`https://wa.me/16692688087?text=${encodeURIComponent(
-                  `Hi, I'm interested in this product:\n\n${product.name}\nPrice: ${
-                    product.price === 0 ? "Contact for price" : `$${product.price}`
-                  }\n\nImage: ${encodeURI(selectedImage)}?f_auto,q_auto,w_600\n\nIs this available?`
-                )}`}
-                target="_blank"
+                // href={`https://wa.me/16692688087?text=${encodeURIComponent(
+                //   `Hi, I'm interested in this product:\n\n${product.name}\nPrice: ${
+                //     product.price === 0 ? "Contact for price" : `$${product.price}`
+                //   }\n\nImage: ${encodeURI(selectedImage)}?f_auto,q_auto,w_600\n\nIs this available?`
+                // )}`}
+                // target="_blank"
                 color="inherit"
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => {e.stopPropagation(); setShowEventDateModal(true); setProductEnquiry(product);}}
               >
                 <WhatsApp />
               </IconButton>
             </Box>
           </Box>
         </Box>
-
+        <ProductEnquiryModal product={productEnquiry} showEventDateModal={showEventDateModal} setShowEventDateModal={setShowEventDateModal}/>
         {/* Related Products */}
         <Box
           sx={{

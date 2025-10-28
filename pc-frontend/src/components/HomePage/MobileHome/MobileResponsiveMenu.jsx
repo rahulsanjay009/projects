@@ -12,7 +12,8 @@ import {  useNavigate } from 'react-router-dom'; // Add Link to navigate
 const MobileResponsiveMenu = ({ categories}) => {
   const navigate = useNavigate()
   const handleCategoryChange = (category) => {
-    navigate(encodeURIComponent(`/${category}`))
+    navigate(encodeURIComponent(`/${category}`));
+    window.location.reload();
   };
 
   return (
@@ -36,7 +37,7 @@ const MobileResponsiveMenu = ({ categories}) => {
             <div className="ion-padding" slot="content">
               <IonMenuToggle>
                 <IonItem button onClick={() => handleCategoryChange('ALL')}>
-                  <IonLabel>All</IonLabel>
+                  <IonLabel>All Pictures</IonLabel>
                 </IonItem>
               </IonMenuToggle>
 

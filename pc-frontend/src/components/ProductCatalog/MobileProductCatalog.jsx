@@ -11,6 +11,8 @@ import './ProductCatalog.css';
 import IonIcon from "@reacticons/ionicons";
 import AddRemoveProduct from "./AddRemoveProduct";
 import MobileProductImageSlideshow from "./MobileProductImageSlideShow";
+import ProductEnquiryModal from "./ProductEnquiryModal";
+import Button from "@mui/material/Button";
 
 const BATCH_SIZE = 8;
 
@@ -26,7 +28,8 @@ const MobileProductCatalog = ({ products = [], relatedProducts = [] }) => {
   const [visibleProducts, setVisibleProducts] = useState([]);
   const [nextIndex, setNextIndex] = useState(0);
   const [loading, setLoading] = useState(false);
-
+  const [showEventDateModal, setShowEventDateModal] = useState(false);
+  const [productEnquiry, setProductEnquiry] = useState(null);
   const loadNextBatch = async () => {
     if (nextIndex >= products.length) return;
 
@@ -80,24 +83,31 @@ const MobileProductCatalog = ({ products = [], relatedProducts = [] }) => {
             </IonRow>
             <IonRow style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{width:'50%'}}> <AddRemoveProduct productId={product.id}/> </div>
-              <a
-                    href={`https://wa.me/16692688087?phone=16692688087&text=${encodeURIComponent(
-                      `Hi, I'm interested in this product:\n\n${product.name}\nPrice: ${
-                        product.price == 0 ? "Contact for price" : `$${product.price}`
-                      }\n\nImage: ${encodeURI(product.image_url)}?f_auto,q_auto,w_600\n\nIs this available?`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="WhatsApp"
-                    onClick={(e) => e.stopPropagation()}
-                >
+             <Button
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+                variant="outlined"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowEventDateModal(true);
+                  setProductEnquiry(product);
+                }}
+                sx={{
+                  color: "#25d366",
+                  borderColor: "#25d366",
+                  "&:hover": {
+                    backgroundColor: "rgba(37, 211, 102, 0.1)",
+                    borderColor: "#25d366",
+                  },
+                }}
+              >
                     <IonIcon name="logo-whatsapp" style={{ height: '30px', width: '30px', color: '#25d366' }} />
-                </a>
+                </Button>
             </IonRow>          
           </IonCardContent>
         </IonCard>
       ))}
-
+      <ProductEnquiryModal product={productEnquiry} showEventDateModal={showEventDateModal} setShowEventDateModal={setShowEventDateModal}/>
       {loading && (
         <div style={{ display: 'flex', justifyContent: 'center', padding: '16px' }}>
           <IonSpinner name="crescent" />

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styles from './HomePage.module.css'
 import { Button } from '@mui/material';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../Authorization/useAuth';
 
 const HomePage = () => {
     const location = useLocation()
@@ -9,6 +10,7 @@ const HomePage = () => {
     const paths = {'/':'S','/scheduledPickups':'S','/orders':'O','/oldOrders':'OO','/inventory':'I'}
     const [component,setComponent] = useState(paths[path]);
     const navigate = useNavigate();
+    // const { logout } = useAuth();
 
     return (
         <div>
@@ -51,7 +53,18 @@ const HomePage = () => {
                     Categories
                 </Button>
 
-
+                <Button className = {styles.nav_button}
+                    variant='outlined'
+                    color="error"
+                    sx={{alignSelf: 'right', float: 'right'}}
+                    onClick={() => {
+                        // logout(); 
+                        navigate('/authorize')
+                    }} 
+                    > 
+                    Logout
+                </Button>
+                
             </div>
             
             <Outlet/>

@@ -12,15 +12,21 @@ const AboutUs = () => {
           About Us
         </Typography>
         <Typography variant="body1" paragraph>
-        Thank you for supporting small businesses. Sri Krishna Party Rentals LLC is a family-based event rental services company located in Ellis community Tracy California.
-        We have rental items for Birthday parties, Graduation parties, Get togethers, baby shower, gender reveal parties, Indian house-warming and Indian traditional events.  All our rental items are foldable and fits in the car. Most of our rental items are brand new and clean. Our prices are very reasonable compared to the market. We accept Cash, Zelle, PayPal and Venmo payments. We are open on all 7 days till late evening. You can walk in any day. We appreciate your referrals. We are passionate on serving the community and keep on increasing our inventory with latest trending decor items. 
-        Please reach us @ 669 268 8087 or srikrishnapartyrentals@gmail.com. 
-        Once again thank you for your business. See you soon.
+        Thank you for supporting small businesses! Sri Krishna Party Rentals LLC is a family-owned event rental company located in the Ellis community of Tracy, California.
+
+          We offer a wide range of rental items for birthdays, graduations, get-togethers, baby showers, gender reveal parties, Indian house-warmings, and traditional Indian events. All our rental items are foldable and car-friendly, with most being brand new and meticulously cleaned.
+
+          Our prices are competitive, and we accept Cash, Zelle, PayPal, and Venmo for your convenience. We’re open 7 days a week until late evening, so feel free to walk in anytime. Your referrals are greatly appreciated, and we are passionate about serving the community by continuously expanding our inventory with the latest trending decor items.
+
+          For inquiries, please reach us at <a href='tel:6692688087'>669-268-8087</a> or <a href="mailto:srikrishnapartyrentals@gmail.com?subject=Order%20Inquiry&body=Hello%2C%0A%0AI%20would%20like%20to%20inquire%20about...">srikrishnapartyrentals@gmail.com
+          </a>.
+
+          Once again, thank you for your business. We look forward to making your next event truly memorable!
         </Typography>
-        <Typography variant="body1" paragraph>
+        {/* <Typography variant="body1" paragraph>
           From weddings and birthdays to corporate events and religious ceremonies, our experienced
           team is dedicated to helping you plan and execute the perfect celebration.
-        </Typography>
+        </Typography> */}
       </Box>
 
       <Divider sx={{ mb: 4 }} />
@@ -28,14 +34,25 @@ const AboutUs = () => {
       {/* Terms of Use Section */}
       <Box mb={6}>
         <Typography variant="h4" gutterBottom>
-          Terms of Use
+          ⚠️ Terms & Conditions
         </Typography>
-        <Typography variant="body1" >
-        All rental prices are based on a 24-hour period. You are required to return all rented items within 24 hours of pickup or delivery unless otherwise agreed upon in writing. Failure to return items on time may result in additional charges.
-
-        You are fully responsible for any physical damage, loss, or misuse of the rented equipment during the rental period. Sri Krishna Party Rentals LLC retains ownership of all rental items and reserves the right to charge for repair or replacement in the event of damage or non-return.
-
-        
+        <Typography variant="body1" gutterBottom>
+          • Your order will be confirmed only after advance payment is made.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          • Rental prices apply for a 24-hour period.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          • All orders are final — no cancellations, refunds, or exchanges will be accepted.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          • Items must be returned in the same condition as received.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          • You are responsible for any damages or liabilities during the rental period.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          • Delivery charges are extra, based on distance and number of items.
         </Typography>
         <Typography variant="body1" >
         We may update these terms at any time without prior notice. Continued use of our services constitutes acceptance of the most current terms.

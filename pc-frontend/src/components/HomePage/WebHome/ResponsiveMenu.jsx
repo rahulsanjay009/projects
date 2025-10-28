@@ -19,7 +19,7 @@ const ResponsiveMenu = ({ categories }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const allCategories = useMemo(() => ['ALL', ...categories.map((c) => c.name)], [categories]);
+  const allCategories = useMemo(() => [{"name": 'ALL', value:'All Pictures'}, ...categories.map((c) => ({"name": c.name, "value":c.name}))], [categories]);
 
   const currentPath = decodeURIComponent(location.pathname).slice(1).toLowerCase();
 
@@ -37,6 +37,7 @@ const ResponsiveMenu = ({ categories }) => {
   const handleSelect = (category) => {
     const route = category.toLowerCase() === 'home' ? '/' : `/${encodeURIComponent(category)}`;
     navigate(route);
+    window.location.reload();
     handleClose();
   };
 
@@ -79,7 +80,7 @@ const ResponsiveMenu = ({ categories }) => {
           <Button
             onClick={handleMenuClick}
             sx={{
-              color: currentPath && allCategories.some(cat => cat.toLowerCase() === currentPath) ? 'yellow' : 'white',
+              color: currentPath && allCategories.some(cat => cat.name.toLowerCase() === currentPath) ? 'yellow' : 'white',
               fontWeight: 'normal',
             }}
           >
@@ -87,9 +88,9 @@ const ResponsiveMenu = ({ categories }) => {
           </Button>
 
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-            {allCategories.map((name, index) => (
-              <MenuItem key={index} onClick={() => handleSelect(name)}>
-                {name}
+            {allCategories.map((item, index) => (
+              <MenuItem key={index} onClick={() => handleSelect(item.name)}>
+                {item.value}
               </MenuItem>
             ))}
           </Menu>

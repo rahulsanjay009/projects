@@ -15,6 +15,7 @@ const LatestProductsCarousel = () => {
   useEffect(() => {
     APIService().fetchLatestProducts()
       .then((res) => {
+        console.log(res)
         if(res?.success)
             setProducts(res?.products);
         setLoading(false);

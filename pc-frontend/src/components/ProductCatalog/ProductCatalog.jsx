@@ -12,6 +12,10 @@ import { FaWhatsapp as WhatsApp} from 'react-icons/fa';
 import SideBar from "./SideBar";
 import AddRemoveProduct from "./AddRemoveProduct";
 import { useLocation } from "react-router-dom";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import ProductEnquiryModal from "./ProductEnquiryModal";
 
 const BATCH_SIZE = 15;
 
@@ -28,10 +32,11 @@ const ProductCatalog = ({ products = [], relatedProducts = [] }) => {
   const [nextIndex, setNextIndex] = useState(0);
   const [loadingBatch, setLoadingBatch] = useState(false);
   const productIds = useRef(new Set());
-
+  const [showEventDateModal, setShowEventDateModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
+  const [eventDate, setEventDate] = useState('');
+  const [productEnquiry, setProductEnquiry] = useState(null);
   const loadNextBatch = useCallback(async () => {
     if (nextIndex >= products.length) return;
 
@@ -68,6 +73,8 @@ const ProductCatalog = ({ products = [], relatedProducts = [] }) => {
       loadNextBatch();
     }
   }, [loadingBatch, nextIndex, products.length, loadNextBatch]);
+
+  
 
   return (
     <Box display="flex">
@@ -177,19 +184,27 @@ const ProductCatalog = ({ products = [], relatedProducts = [] }) => {
                     </Typography>
                     <Box display={"flex"} justifyContent={"space-between"} mt={1}>                      
                         <Box width='50%'><AddRemoveProduct productId={product.id}/></Box>
-                        <IconButton
-                          component="a"
-                          href={`https://wa.me/16692688087?text=${encodeURIComponent(
-                            `Hi, I'm interested in this product:\n\n${product.name}\nPrice: ${
-                              product.price == 0 ? "Contact for price" : `$${product.price}`
-                            }\n\nImage: ${encodeURI(product.image_url)}?f_auto,q_auto,w_600\n\nIs this available?`
-                          )}`}
-                          target="_blank"
-                          color="inherit"
-                          onClick={(e) => e.stopPropagation()}
+                        
+                        <Button
+                          rel="noopener noreferrer"
+                          aria-label="WhatsApp"
+                          variant="outlined"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowEventDateModal(true);
+                            setProductEnquiry(product);
+                          }}
+                          sx={{
+                            color: "#25d366",
+                            borderColor: "#25d366",
+                            "&:hover": {
+                              backgroundColor: "rgba(37, 211, 102, 0.1)",
+                              borderColor: "#25d366",
+                            },
+                          }}
                         >
                           <WhatsApp />
-                        </IconButton>
+                        </Button>
                     </Box>
                   </CardContent>
                 </CardActionArea>
@@ -197,6 +212,7 @@ const ProductCatalog = ({ products = [], relatedProducts = [] }) => {
             </Box>
 
           ))}   
+          <ProductEnquiryModal product={productEnquiry} showEventDateModal={showEventDateModal} setShowEventDateModal={setShowEventDateModal}/>
           {loadingBatch && (
             <Box component={'div'} width={'350px'} alignSelf={'center'} textAlign={'center'}>
               <CircularProgress />

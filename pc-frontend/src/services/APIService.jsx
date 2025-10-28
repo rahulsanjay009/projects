@@ -1,6 +1,6 @@
 const APIService = () => {
-    // const APIENDPOINT = 'https://backend.srikrishnapartyrentalsllc.com'
-    const APIENDPOINT = 'http://localhost:8000'
+    const APIENDPOINT = 'https://backend.srikrishnapartyrentalsllc.com'
+    // const APIENDPOINT = 'http://localhost:8000'
     const SECRET_API_KEY = import.meta.env.VITE_SECRET_API_KEY;
     const makeRequest = async (url, method = 'GET', data = null, headers = {}) => {
         try {
@@ -57,8 +57,8 @@ const APIService = () => {
     }
 
     const sendOrderToSQS = (data) => {
-        const url = `${APIENDPOINT}/inventory/send_to_sqs`;
-        return makeRequest(url, 'POST', data);
+        const url = `${APIENDPOINT}/inventory/sqs_message`;
+        return makeRequest(url, 'POST', {"order_details":data});
     }
     return {
         fetchCategories,

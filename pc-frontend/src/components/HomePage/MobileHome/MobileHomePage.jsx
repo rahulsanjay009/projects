@@ -17,6 +17,7 @@ import MobileContactUs from "../../ContactUs/MobileContactUs";
 import { MdShoppingCart as ShoppingCartIcon} from 'react-icons/md';
 import { useSelector } from "react-redux";
 import { selectTotalCount } from "../../../Redux/Reducers/CartReducer";
+import HeaderTitle from "./HeaderTitle";
 
 const MobileHomePage = () => {
   const { category } = useParams();  // Get category dynamically from the URL
@@ -29,62 +30,40 @@ const MobileHomePage = () => {
       <MobileResponsiveMenu categories={categories}/>
       <IonPage id="main-content">
         <IonHeader>
-          <IonToolbar className="ion_toolbar">
-            <IonButtons slot="start">
-              <IonMenuButton className="ion_menu_button" />
-            </IonButtons>
-            <IonTitle>
-              <div style={{  display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',  // or 'space-between' if needed
-                gap: '10px',
-                width: '100%'  }}>
-                <div className="ion_title" >
-                  <a href='/'> 
-                  <img
-                      src="https://res.cloudinary.com/dmm4awbwm/image/upload/f_auto,q_auto/tsee5mrm7cymclmefpic"
-                      alt="Kitten"
-                      height="35"
-                      width="35"
-                    />
-                    </a>
-                    <IonText style={{padding:'5px'}}>
-                    {!category || category === '/ALL'
-                      ? (
-                          <>
-                            Sri Krishna<br />
-                            Party Rentals LLC
-                          </>
-                        )
-                      : category.replace('/', '')
-                    }
-                  </IonText>
-                </div>
-                <div style={{position:'absolute', right:'15px'}}>
-                    <div style={{ position: 'relative', display: 'inline-block', right:0 }} onClick={() => {navigate('/cart')}}>
-                      <ShoppingCartIcon style={{ fontSize: '32px' }} />
-                      {cartItemCount > 0 && (
-                        <IonBadge
-                          color="danger"
-                          style={{
-                            position: 'absolute',
-                            top: '-4px',
-                            right: '-4px',
-                            fontSize: '0.7rem',
-                            padding: '4px 6px',
-                            borderRadius: '50%',
-                            lineHeight: '1',
-                          }}
-                        >
-                          {cartItemCount}
-                        </IonBadge>
-                      )}
-                    </div>
-                </div>
-              </div>
-              
-            </IonTitle>
-          </IonToolbar>
+          <IonToolbar className="ion_toolbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <IonButtons slot="start">
+            <IonMenuButton className="ion_menu_button" />
+          </IonButtons>
+
+          <HeaderTitle category={category} />
+
+          <IonButtons slot="end" style={{ position: 'relative' }}>
+            <button
+              style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', marginRight:"5px" }}
+              onClick={() => navigate('/cart')}
+              aria-label="Go to cart"
+            >
+              <ShoppingCartIcon size={32} color='white'/>
+              {cartItemCount > 0 && (
+                <IonBadge
+                  color="danger"
+                  style={{
+                    position: 'absolute',
+                    top: '-4px',
+                    right: '-4px',
+                    fontSize: '0.7rem',
+                    padding: '4px 6px',
+                    borderRadius: '50%',
+                    lineHeight: '1',
+                  }}
+                >
+                  {cartItemCount}
+                </IonBadge>
+              )}
+            </button>
+          </IonButtons>
+        </IonToolbar>
+
         </IonHeader>
         <IonContent scrollEvents={true}>
           <MobileResponsiveMenu categories={categories} />
